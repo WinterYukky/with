@@ -12,28 +12,26 @@ import (
 // Make this query.
 //
 // WITH `buyers` AS (SELECT * FROM `sales`) SELECT * FROM `users` WHERE users.id IN (SELECT user_id FROM buyers)
-type With struct {
-	queries []query
-}
+type With []query
 type query struct {
 	name     string
 	subquery *gorm.DB
 }
 
 // ModifyStatement implements gorm interface
-func (with *With) ModifyStatement(stmt *gorm.Statement) {
+func (with With) ModifyStatement(stmt *gorm.Statement) {
+	if len(with) == 0 {
+		return
+	}
 	clause := stmt.Clauses["SELECT"]
 	clause.BeforeExpression = with
 	stmt.Clauses["SELECT"] = clause
 }
 
 // Build implements gorm interface
-func (with *With) Build(builder clause.Builder) {
-	if len(with.queries) == 0 {
-		return
-	}
+func (with With) Build(builder clause.Builder) {
 	builder.WriteString("WITH ")
-	for index, query := range with.queries {
+	for index, query := range with {
 		if index > 0 {
 			builder.WriteString(", ")
 		}
@@ -44,22 +42,14 @@ func (with *With) Build(builder clause.Builder) {
 }
 
 // Append a With clause.
-func (with *With) Append(name string, subquery *gorm.DB) *With {
-	with.queries = append(with.queries, query{
+func (with With) Append(name string, subquery *gorm.DB) With {
+	return append(with, query{
 		name:     name,
 		subquery: subquery,
 	})
-	return with
 }
 
 // New create a With clause.
-func New(name string, subquery *gorm.DB) *With {
-	return &With{
-		queries: []query{
-			{
-				name:     name,
-				subquery: subquery,
-			},
-		},
-	}
+func New() With {
+	return With{}
 }
