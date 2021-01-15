@@ -1,4 +1,7 @@
 # with
+
+![GO](https://github.com/WinterYukky/with/workflows/Go/badge.svg)
+
 With support for GORM
 
 ## Use a With clause
