@@ -2,6 +2,8 @@
 
 ![GO](https://github.com/WinterYukky/with/workflows/Go/badge.svg)
 
+## ⚠️This repository is deprecated. Please see [extra-clause-plugin project](https://github.com/WinterYukky/gorm-extra-clause-plugin)
+
 With support for GORM
 
 ## Use a With clause
